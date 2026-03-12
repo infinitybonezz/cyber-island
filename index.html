@@ -70,3 +70,931 @@ body {
 /* ── VIGNETTE ── */
 .vignette {
   position:fixed; inset:0; z-index:920; pointer-events:none;
+  background: radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.92) 100%);
+}
+
+/* ── CHROMATIC ABERRATION OVERLAY ── */
+.chroma {
+  position:fixed; inset:0; z-index:910; pointer-events:none; mix-blend-mode:screen; opacity:0.03;
+  background: linear-gradient(90deg, rgba(255,0,60,0.5) 0%, transparent 3%, transparent 97%, rgba(0,255,229,0.5) 100%);
+}
+
+/* ── SCANLINES ── */
+.scanlines {
+  position:fixed; inset:0; z-index:905; pointer-events:none; opacity:0.07;
+  background: repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(0,0,0,1) 1px, rgba(0,0,0,1) 2px);
+}
+
+/* ── GLITCH BARS ── */
+.glitch-bar {
+  position:fixed; left:0; right:0; height:1px; pointer-events:none; z-index:900; opacity:0;
+  animation: glitch-sweep 9s ease-in-out infinite;
+}
+.glitch-bar:nth-child(1){ background: linear-gradient(90deg,transparent,var(--cyn),transparent); animation-delay:0s; }
+.glitch-bar:nth-child(2){ background: linear-gradient(90deg,transparent,var(--mag),transparent); animation-delay:3.3s; }
+.glitch-bar:nth-child(3){ background: linear-gradient(90deg,transparent,var(--wht),transparent); animation-delay:6.6s; height:2px; }
+@keyframes glitch-sweep {
+  0%  { top:-2px; opacity:0; }
+  3%  { opacity:0.9; }
+  97% { opacity:0.4; }
+  100%{ top:101vh; opacity:0; }
+}
+
+/* ── AMBIENT LIGHT ── */
+.ambient {
+  position:fixed; inset:0; z-index:1; pointer-events:none;
+  background: radial-gradient(ellipse 60% 40% at 50% 100%, rgba(0,255,229,0.04) 0%, transparent 70%),
+              radial-gradient(ellipse 40% 30% at 20% 60%, rgba(255,26,75,0.03) 0%, transparent 70%);
+}
+
+/* ── CANVASES ── */
+#rain  { position:fixed; inset:0; z-index:2; pointer-events:none; }
+#city  { position:fixed; bottom:52px; left:0; right:0; z-index:3; pointer-events:none; }
+
+/* ── TOP HUD ── */
+.hud-top {
+  position:fixed; top:0; left:0; right:0; z-index:961;
+  padding-top: calc(var(--safe-top) + 2px);
+  padding-left:20px; padding-right:20px;
+  display:flex; justify-content:space-between; align-items:flex-end;
+  height: calc(var(--safe-top) + 32px);
+  pointer-events:none;
+  border-bottom: 1px solid rgba(0,255,229,0.06);
+}
+.hud-txt {
+  font-family:'Share Tech Mono','Courier New',monospace; font-size:9px;
+  color: rgba(0,255,229,0.5); letter-spacing:0.2em; line-height:1;
+}
+.hud-txt .a { color:var(--mag); }
+.hud-txt .b { color:var(--gold); }
+
+/* ── ISLAND ── */
+.island-wrap {
+  position:fixed;
+  top: var(--safe-top);
+  left:50%; transform:translate(-50%, 10px);
+  z-index:960;
+}
+
+.island {
+  width:126px; height:37px;
+  background:#000;
+  border-radius:22px;
+  border:1px solid rgba(0,255,229,0.7);
+  position:relative; overflow:hidden;
+  transition:
+    width  0.4s cubic-bezier(.34,1.4,.64,1),
+    height 0.4s cubic-bezier(.34,1.4,.64,1),
+    border-radius 0.4s ease,
+    border-color 0.4s ease,
+    box-shadow 0.4s ease;
+  cursor:pointer;
+  box-shadow:
+    0 0 0 1px rgba(0,255,229,0.1),
+    0 0 16px rgba(0,255,229,0.4),
+    0 0 40px rgba(0,255,229,0.12),
+    0 2px 60px rgba(0,0,0,0.9),
+    inset 0 0 12px rgba(0,255,229,0.03);
+}
+
+/* inner vignette on island */
+.island::after {
+  content:''; position:absolute; inset:0; z-index:98; pointer-events:none;
+  background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.5) 100%);
+}
+
+.island.ex-sm { width:172px; height:52px; }
+.island.ex-md {
+  width: min(320px, 90vw); height:108px; border-radius:32px;
+  border-color: rgba(0,255,229,0.6);
+  box-shadow: 0 0 0 1px rgba(0,255,229,0.08),
+    0 0 24px rgba(0,255,229,0.5), 0 0 80px rgba(0,255,229,0.15),
+    0 4px 80px rgba(0,0,0,0.95), inset 0 0 20px rgba(0,255,229,0.04);
+}
+.island.ex-lg {
+  width: min(340px, 94vw); height:152px; border-radius:36px;
+  border-color: rgba(255,26,75,0.7);
+  box-shadow: 0 0 0 1px rgba(255,26,75,0.1),
+    0 0 24px rgba(255,26,75,0.55), 0 0 80px rgba(255,26,75,0.18),
+    0 4px 80px rgba(0,0,0,0.95), inset 0 0 20px rgba(255,26,75,0.04);
+}
+
+/* ── SCENES ── */
+.scene {
+  position:absolute; inset:0;
+  display:flex; align-items:center; justify-content:center;
+  opacity:0; transition:opacity 0.3s ease; pointer-events:none;
+}
+.scene.active { opacity:1; }
+.scene svg { image-rendering:pixelated; }
+
+/* ── SIDE HUD ── */
+.side-r, .side-l {
+  position:fixed; top:50%; transform:translateY(-50%);
+  z-index:955; pointer-events:none;
+  display:flex; flex-direction:column; gap:18px;
+}
+.side-r { right:14px; align-items:flex-end; }
+.side-l { left:14px; }
+
+.hud-item { font-size:8px; color:rgba(0,255,229,0.35); letter-spacing:0.15em; line-height:2; }
+.hud-item strong { display:block; font-size:10px; color:var(--cyn); opacity:0.8; }
+.hud-item .r { color:var(--mag); }
+.hud-item .g { color:#39ff14; }
+.bar { width:36px; height:2px; background:rgba(0,255,229,0.1); margin-top:3px; }
+.bar-f { height:100%; background:var(--cyn); transition:width 1.2s; }
+.bar-f.r { background:var(--mag); }
+
+/* ── BOTTOM HUD ── */
+.hud-bot {
+  position:fixed; bottom:0; left:0; right:0;
+  padding-bottom:calc(var(--safe-bot) + 4px);
+  z-index:962;
+  display:flex; flex-direction:column; align-items:center; gap:10px;
+  pointer-events:all;
+}
+
+.dots { display:flex; gap:6px; align-items:center; }
+.dot {
+  width:5px; height:5px; border-radius:50%;
+  background:rgba(0,255,229,0.15); border:1px solid rgba(0,255,229,0.2);
+  transition:all 0.4s;
+}
+.dot.on { background:var(--cyn); box-shadow:0 0 6px var(--cyn); border-color:var(--cyn); }
+.dot.on.r { background:var(--mag); box-shadow:0 0 6px var(--mag); border-color:var(--mag); }
+
+.controls { display:flex; gap:6px; flex-wrap:wrap; justify-content:center; padding:0 12px; }
+.btn {
+  padding:8px 14px; min-width:66px; text-align:center;
+  background:rgba(0,0,0,0.8);
+  border:1px solid rgba(0,255,229,0.4);
+  color:rgba(0,255,229,0.7);
+  font-family:'Share Tech Mono','Courier New',monospace; font-size:10px;
+  letter-spacing:0.12em; text-transform:uppercase; cursor:pointer;
+  clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);
+  transition:all 0.18s;
+  -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px);
+  position:relative; overflow:hidden;
+}
+.btn::before {
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(180deg, rgba(0,255,229,0.05) 0%, transparent 100%);
+  pointer-events:none;
+}
+.btn:active,.btn.active {
+  background:rgba(0,255,229,0.12);
+  border-color:var(--cyn); color:var(--cyn);
+  box-shadow:0 0 12px rgba(0,255,229,0.3);
+}
+.btn.r { border-color:rgba(255,26,75,0.4); color:rgba(255,26,75,0.7); }
+.btn.r:active,.btn.r.active { background:rgba(255,26,75,0.12); border-color:var(--mag); color:var(--mag); box-shadow:0 0 12px rgba(255,26,75,0.3); }
+
+.label-hud { font-size:8px; color:rgba(0,255,229,0.2); letter-spacing:0.28em; text-transform:uppercase; }
+
+/* ── ANIMS ── */
+@keyframes px-blink { 0%,84%,100%{transform:scaleY(1)} 88%{transform:scaleY(0.05)} }
+@keyframes neon-flk { 0%,17%,19%,23%,54%,56%,100%{opacity:1} 18%,22%,55%{opacity:0.2} }
+@keyframes blink { 50%{opacity:0} }
+@keyframes scan-sweep {
+  0%{transform:translateY(-4px);opacity:0} 6%{opacity:1} 94%{opacity:0.5} 100%{transform:translateY(160px);opacity:0}
+}
+@keyframes pulse-out {
+  0%{r:5;opacity:1;stroke-width:2.5}
+  100%{r:44;opacity:0;stroke-width:0.3}
+}
+@keyframes float-y {
+  0%,100%{transform:translateY(0)} 50%{transform:translateY(-4px)}
+}
+@keyframes ember {
+  0%{transform:translateY(0) scale(1);opacity:1}
+  100%{transform:translateY(-20px) scale(0.3);opacity:0}
+}
+</style>
+</head>
+<body>
+
+<!-- Layers -->
+<div class="grain"></div>
+<div class="letterbox-top"></div>
+<div class="letterbox-bot"></div>
+<div class="vignette"></div>
+<div class="chroma"></div>
+<div class="scanlines"></div>
+<div class="ambient"></div>
+<div class="glitch-bar"></div>
+<div class="glitch-bar"></div>
+<div class="glitch-bar"></div>
+
+<canvas id="rain"></canvas>
+<canvas id="city"></canvas>
+
+
+<!-- TOP HUD -->
+<div class="hud-top">
+  <div class="hud-txt">SYS:<span class="a">GHOST.EXE</span></div>
+  <div class="hud-txt" id="clock" style="letter-spacing:0.3em;color:rgba(0,255,229,0.6)">--:--:--</div>
+  <div class="hud-txt"><span class="b" style="animation:blink 1.1s step-end infinite">◆</span> <span class="a">REC</span></div>
+</div>
+
+<!-- DYNAMIC ISLAND -->
+<div class="island-wrap">
+  <div class="island" id="island">
+
+    <!-- ══ S0: RONIN ══ -->
+    <div class="scene active" id="s0">
+      <svg viewBox="0 0 126 37" width="100%" height="100%" preserveAspectRatio="xMidYMid meet">
+        <!-- Atmospheric depth gradient -->
+        <defs>
+          <radialGradient id="faceglow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#00ffe5" stop-opacity="0.08"/>
+            <stop offset="100%" stop-color="#000" stop-opacity="0"/>
+          </radialGradient>
+          <linearGradient id="armorgrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#1a2a3a"/>
+            <stop offset="100%" stop-color="#050e14"/>
+          </linearGradient>
+        </defs>
+        <rect width="126" height="37" fill="#000"/>
+        <!-- Ambient glow behind face -->
+        <ellipse cx="63" cy="16" rx="28" ry="16" fill="url(#faceglow)"/>
+        <!-- Hair silhouette -->
+        <rect x="44" y="1"  width="24" height="5"  fill="#c8d0d8"/>
+        <rect x="42" y="4"  width="5"  height="15" fill="#c8d0d8"/>
+        <rect x="79" y="4"  width="5"  height="15" fill="#c8d0d8"/>
+        <rect x="44" y="4"  width="3"  height="15" fill="#a8b0b8"/>
+        <!-- Face - layered shading -->
+        <rect x="47" y="6"  width="32" height="18" fill="#d4c4a8"/>
+        <rect x="47" y="6"  width="32" height="6"  fill="#b8a88c"/>
+        <rect x="47" y="20" width="32" height="4"  fill="#c0b090"/>
+        <!-- Cheek shadow -->
+        <rect x="47" y="10" width="6"  height="10" fill="#c0a880" opacity="0.5"/>
+        <rect x="73" y="10" width="6"  height="10" fill="#c0a880" opacity="0.5"/>
+        <!-- Eyes -->
+        <g style="animation:px-blink 3.5s ease-in-out infinite;transform-origin:55px 14px">
+          <rect x="51" y="11" width="8"  height="7"  fill="#1a0a00"/>
+          <rect x="52" y="12" width="6"  height="5"  fill="#00ffe5"/>
+          <rect x="53" y="12" width="3"  height="3"  fill="#003830"/>
+          <rect x="55" y="13" width="2"  height="2"  fill="#00ffe5" style="animation:neon-flk 2s infinite"/>
+          <rect x="54" y="11" width="5"  height="1"  fill="#1a0a00"/><!-- lash -->
+        </g>
+        <g style="animation:px-blink 3.5s ease-in-out infinite 0.1s;transform-origin:71px 14px">
+          <rect x="67" y="11" width="8"  height="7"  fill="#1a0a00"/>
+          <rect x="68" y="12" width="6"  height="5"  fill="#00ffe5"/>
+          <rect x="69" y="12" width="3"  height="3"  fill="#003830"/>
+          <rect x="71" y="13" width="2"  height="2"  fill="#00ffe5" style="animation:neon-flk 2s infinite 0.3s"/>
+          <rect x="68" y="11" width="5"  height="1"  fill="#1a0a00"/>
+        </g>
+        <!-- Nose bridge shadow -->
+        <rect x="61" y="15" width="4" height="5" fill="#b89878" opacity="0.4"/>
+        <!-- Mouth -->
+        <rect x="55" y="21" width="16" height="2" fill="#8a5040"/>
+        <rect x="57" y="21" width="12" height="1" fill="#6a3028"/>
+        <!-- Scar -->
+        <rect x="68" y="9"  width="1"  height="8"  fill="#ff1a4b" opacity="0.6"/>
+        <!-- Face paint / war marks -->
+        <rect x="48" y="12" width="4"  height="1"  fill="#ff1a4b" opacity="0.8"/>
+        <rect x="74" y="12" width="4"  height="1"  fill="#ff1a4b" opacity="0.8"/>
+        <!-- Armor body -->
+        <rect x="36" y="24" width="54" height="13" fill="url(#armorgrad)"/>
+        <rect x="36" y="24" width="54" height="1"  fill="#00ffe5" opacity="0.4"/>
+        <!-- Armor plates -->
+        <rect x="36" y="25" width="18" height="12" fill="#0a1820"/>
+        <rect x="55" y="25" width="16" height="12" fill="#050e14"/>
+        <rect x="72" y="25" width="18" height="12" fill="#0a1820"/>
+        <!-- Plate dividers neon -->
+        <rect x="54" y="25" width="1"  height="12" fill="#00ffe5" opacity="0.3"/>
+        <rect x="71" y="25" width="1"  height="12" fill="#00ffe5" opacity="0.3"/>
+        <!-- Armor details -->
+        <rect x="38" y="28" width="12" height="1"  fill="#00ffe5" opacity="0.5"/>
+        <rect x="74" y="28" width="12" height="1"  fill="#00ffe5" opacity="0.5"/>
+        <rect x="58" y="27" width="10" height="1"  fill="#ff1a4b" opacity="0.6"/>
+        <!-- Katana blade -->
+        <rect x="88" y="1"  width="2"  height="28" fill="#c8d8e0"/>
+        <rect x="89" y="1"  width="1"  height="28" fill="#e8f0f8" opacity="0.6"/>
+        <rect x="87" y="1"  width="1"  height="28" fill="#80909a" opacity="0.5"/>
+        <!-- Blade glow -->
+        <rect x="88" y="1"  width="2"  height="8"  fill="#00ffe5" opacity="0.5" style="animation:neon-flk 1.8s infinite"/>
+        <!-- Guard -->
+        <rect x="84" y="16" width="10" height="3"  fill="#4a5a6a"/>
+        <rect x="85" y="16" width="8"  height="1"  fill="#8a9aaa"/>
+        <!-- Handle -->
+        <rect x="87" y="19" width="4"  height="10" fill="#2a1a0a"/>
+        <rect x="87" y="20" width="4"  height="1"  fill="#8a6a40" opacity="0.6"/>
+        <rect x="87" y="22" width="4"  height="1"  fill="#8a6a40" opacity="0.6"/>
+        <rect x="87" y="24" width="4"  height="1"  fill="#8a6a40" opacity="0.6"/>
+        <!-- HP / MP bars cinematic -->
+        <text x="3" y="10" font-family="monospace" font-size="4" fill="#00ffe5" opacity="0.5" letter-spacing="0.05em">RONIN</text>
+        <rect x="3" y="12" width="30" height="3"  fill="#000" stroke="#00ffe5" stroke-width="0.5"/>
+        <rect x="4" y="13" width="26" height="1"  fill="#00ffe5" opacity="0.8"/>
+        <rect x="4" y="13" width="26" height="1"  fill="#00ffe5" opacity="0.3" style="animation:neon-flk 1.5s infinite"/>
+        <text x="3" y="21" font-family="monospace" font-size="4" fill="#ff1a4b" opacity="0.5" letter-spacing="0.05em">FOCUS</text>
+        <rect x="3" y="23" width="30" height="3"  fill="#000" stroke="#ff1a4b" stroke-width="0.5"/>
+        <rect x="4" y="24" width="18" height="1"  fill="#ff1a4b" opacity="0.8"/>
+        <!-- Corner frame marks -->
+        <rect x="0"  y="0"  width="4" height="1" fill="#00ffe5" opacity="0.4"/>
+        <rect x="0"  y="0"  width="1" height="4" fill="#00ffe5" opacity="0.4"/>
+        <rect x="122" y="0"  width="4" height="1" fill="#00ffe5" opacity="0.4"/>
+        <rect x="125" y="0"  width="1" height="4" fill="#00ffe5" opacity="0.4"/>
+      </svg>
+    </div>
+
+    <!-- ══ S1: NEURAL HACK ══ -->
+    <div class="scene" id="s1">
+      <svg viewBox="0 0 320 108" width="100%" height="100%" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <radialGradient id="eyeglow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#00ffe5" stop-opacity="0.3"/>
+            <stop offset="60%" stop-color="#00ffe5" stop-opacity="0.05"/>
+            <stop offset="100%" stop-color="#000" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <rect width="320" height="108" fill="#000"/>
+        <!-- Grid lines subtle -->
+        <line x1="0" y1="27" x2="320" y2="27" stroke="#00ffe5" stroke-width="0.3" opacity="0.1"/>
+        <line x1="0" y1="54" x2="320" y2="54" stroke="#00ffe5" stroke-width="0.3" opacity="0.1"/>
+        <line x1="0" y1="81" x2="320" y2="81" stroke="#00ffe5" stroke-width="0.3" opacity="0.1"/>
+        <!-- Scan beam -->
+        <rect x="0" y="0" width="320" height="2" fill="#00ffe5" opacity="0.5"
+          style="animation:scan-sweep 1.8s linear infinite"/>
+        <!-- Terminal text with varying opacity for depth -->
+        <text x="6" y="14" font-family="monospace" font-size="6.5" fill="#00ffe5" opacity="0.8" letter-spacing="0.05em">SYS::NEURAL_LINK_INIT_v9.0.1</text>
+        <text x="6" y="24" font-family="monospace" font-size="6"   fill="#39ff14" opacity="0.65">▸ ACCESS_GRANTED [GHOST_PROTOCOL]</text>
+        <text x="6" y="33" font-family="monospace" font-size="6"   fill="#00ffe5" opacity="0.45">  PING 127.0.0.1 .............. OK</text>
+        <text x="6" y="42" font-family="monospace" font-size="6"   fill="#ff1a4b" opacity="0.8">⚠ INTRUSION_DETECTED SECTOR_7</text>
+        <text x="6" y="51" font-family="monospace" font-size="6"   fill="#00ffe5" opacity="0.35">  ENCRYPT AES-∞ BIT ...........</text>
+        <text x="6" y="60" font-family="monospace" font-size="6"   fill="#ffaa00" opacity="0.6">◈ DECRYPTING NEURAL_CORE.......</text>
+        <text x="6" y="86" font-family="monospace" font-size="5"   fill="#00ffe5" opacity="0.25" id="hx1">A4 F2 09 CC 3B E1 78 2D 55 91..</text>
+        <text x="6" y="94" font-family="monospace" font-size="5"   fill="#00ffe5" opacity="0.18" id="hx2">FF 00 7C 1A 3D 88 C4 56 20 AB..</text>
+        <text x="6" y="102" font-family="monospace" font-size="5"  fill="#00ffe5" opacity="0.12" id="hx3">3D 9F 00 B2 44 C1 EE 77 12 5A..</text>
+        <rect x="6" y="64" width="4" height="8" fill="#00ffe5" style="animation:blink 0.75s step-end infinite"/>
+        <!-- Mech eye -->
+        <g transform="translate(198,12)">
+          <!-- Outer glow -->
+          <circle cx="44" cy="44" r="42" fill="url(#eyeglow)"/>
+          <!-- Pulse rings -->
+          <circle cx="44" cy="44" r="5"  fill="none" stroke="#00ffe5" stroke-width="2" style="animation:pulse-out 1.6s ease-out infinite"/>
+          <circle cx="44" cy="44" r="5"  fill="none" stroke="#00ffe5" stroke-width="1.5" style="animation:pulse-out 1.6s ease-out infinite 0.8s"/>
+          <!-- Outer ring -->
+          <circle cx="44" cy="44" r="40" fill="none" stroke="#00ffe5" stroke-width="0.5" opacity="0.2" stroke-dasharray="8,4"/>
+          <circle cx="44" cy="44" r="36" fill="none" stroke="#00ffe5" stroke-width="0.3" opacity="0.15" stroke-dasharray="4,8"/>
+          <!-- Iris segments -->
+          <polygon points="44,10 50,26 38,26" fill="#00ffe5" opacity="0.7"/>
+          <polygon points="78,44 62,50 62,38" fill="#00ffe5" opacity="0.7"/>
+          <polygon points="44,78 38,62 50,62" fill="#00ffe5" opacity="0.7"/>
+          <polygon points="10,44 26,38 26,50" fill="#00ffe5" opacity="0.7"/>
+          <!-- Diagonal segments -->
+          <polygon points="68,20 60,34 52,26" fill="#00ffe5" opacity="0.4"/>
+          <polygon points="68,68 52,62 60,54" fill="#00ffe5" opacity="0.4"/>
+          <polygon points="20,68 28,54 36,62" fill="#00ffe5" opacity="0.4"/>
+          <polygon points="20,20 36,26 28,34" fill="#00ffe5" opacity="0.4"/>
+          <!-- Main iris -->
+          <circle cx="44" cy="44" r="22" fill="#000" stroke="#00ffe5" stroke-width="1.5"/>
+          <circle cx="44" cy="44" r="18" fill="#001a18"/>
+          <circle cx="44" cy="44" r="14" fill="#003830" opacity="0.5"/>
+          <!-- Pupil cross -->
+          <rect x="41" y="30" width="6" height="28" fill="#00ffe5" opacity="0.9"/>
+          <rect x="30" y="41" width="28" height="6" fill="#00ffe5" opacity="0.9"/>
+          <rect x="42" y="42" width="4"  height="4" fill="#000"/>
+          <!-- Specular -->
+          <rect x="47" y="36" width="3" height="3" fill="#fff" opacity="0.8"/>
+          <rect x="37" y="48" width="2" height="2" fill="#fff" opacity="0.4"/>
+          <!-- Frame -->
+          <rect x="4"  y="4"  width="80" height="80" fill="none" stroke="#00ffe5" stroke-width="0.8" stroke-dasharray="6,3" opacity="0.3"/>
+          <rect x="0"  y="0"  width="4" height="1" fill="#00ffe5" opacity="0.7"/>
+          <rect x="0"  y="0"  width="1" height="4" fill="#00ffe5" opacity="0.7"/>
+          <rect x="84" y="0"  width="4" height="1" fill="#00ffe5" opacity="0.7"/>
+          <rect x="87" y="0"  width="1" height="4" fill="#00ffe5" opacity="0.7"/>
+          <text x="0" y="96" font-family="monospace" font-size="5" fill="#00ffe5" opacity="0.4">IRIS::LOCKED</text>
+        </g>
+      </svg>
+    </div>
+
+    <!-- ══ S2: MECH GHOST ══ -->
+    <div class="scene" id="s2">
+      <svg viewBox="0 0 340 152" width="100%" height="100%" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <radialGradient id="mechglow2" cx="50%" cy="40%" r="50%">
+            <stop offset="0%" stop-color="#00ffe5" stop-opacity="0.12"/>
+            <stop offset="100%" stop-color="#000" stop-opacity="0"/>
+          </radialGradient>
+          <linearGradient id="mechbody" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#1a2530"/>
+            <stop offset="50%" stop-color="#0d1820"/>
+            <stop offset="100%" stop-color="#050c14"/>
+          </linearGradient>
+        </defs>
+        <rect width="340" height="152" fill="#000"/>
+        <ellipse cx="170" cy="76" rx="80" ry="60" fill="url(#mechglow2)"/>
+        <!-- ECG lines -->
+        <polyline points="0,18 25,18 33,18 38,3 44,36 50,18 75,18 83,18 88,4 94,34 100,18 125,18 133,18 138,5 144,33 150,18 175,18 183,18 188,3 194,35 200,18 225,18 233,18 238,5 244,33 250,18 275,18 283,18 288,4 294,34 300,18 340,18"
+          fill="none" stroke="#00ffe5" stroke-width="1.5" opacity="0.8" stroke-linejoin="round" style="animation:neon-flk 3s infinite"/>
+        <polyline points="0,18 25,18 33,18 38,3 44,36 50,18 75,18 83,18 88,4 94,34 100,18 125,18 133,18 138,5 144,33 150,18 175,18 183,18 188,3 194,35 200,18 225,18 233,18 238,5 244,33 250,18 275,18 283,18 288,4 294,34 300,18 340,18"
+          fill="none" stroke="#00ffe5" stroke-width="10" opacity="0.04" stroke-linejoin="round"/>
+        <polyline points="0,136 25,136 33,136 38,121 44,154 50,136 75,136 83,136 88,122 94,152 100,136 125,136 133,136 138,122 144,150 150,136 175,136 183,136 188,121 194,153 200,136 225,136 233,136 238,122 244,150 250,136 275,136 283,136 288,122 294,152 300,136 340,136"
+          fill="none" stroke="#ff1a4b" stroke-width="1.5" opacity="0.7" stroke-linejoin="round" style="animation:neon-flk 3s infinite 1s"/>
+        <polyline points="0,136 25,136 33,136 38,121 44,154 50,136 75,136 83,136 88,122 94,152 100,136 125,136 133,136 138,122 144,150 150,136 175,136 183,136 188,121 194,153 200,136 225,136 233,136 238,122 244,150 250,136 275,136 283,136 288,122 294,152 300,136 340,136"
+          fill="none" stroke="#ff1a4b" stroke-width="10" opacity="0.04" stroke-linejoin="round"/>
+        <!-- Mech head -->
+        <g transform="translate(118,30)">
+          <!-- Head body -->
+          <rect x="0"  y="0"  width="104" height="76" fill="url(#mechbody)" stroke="#ff1a4b" stroke-width="1.5"/>
+          <rect x="3"  y="3"  width="98"  height="70" fill="none" stroke="#00ffe5" stroke-width="0.4" opacity="0.3"/>
+          <!-- Visor band -->
+          <rect x="8"  y="10" width="88"  height="24" fill="#000814" stroke="#00ffe5" stroke-width="1"/>
+          <rect x="8"  y="10" width="88"  height="24" fill="#00ffe5" opacity="0.04"/>
+          <!-- Left eye unit -->
+          <rect x="12" y="13" width="28"  height="18" fill="#000" stroke="#00ffe5" stroke-width="0.8"/>
+          <rect x="14" y="15" width="8"   height="14" fill="#00ffe5" opacity="0.1"/>
+          <rect x="14" y="15" width="8"   height="14" fill="#00ffe5" style="animation:neon-flk 2.2s infinite" opacity="0.7"/>
+          <rect x="16" y="17" width="4"   height="10" fill="#000"/>
+          <rect x="17" y="19" width="2"   height="4"  fill="#00ffe5"/>
+          <rect x="23" y="15" width="14"  height="7"  fill="#001a18" opacity="0.8"/>
+          <rect x="23" y="23" width="14"  height="6"  fill="#003028" opacity="0.5"/>
+          <!-- Right eye unit -->
+          <rect x="64" y="13" width="28"  height="18" fill="#000" stroke="#ff1a4b" stroke-width="0.8"/>
+          <rect x="66" y="15" width="8"   height="14" fill="#ff1a4b" style="animation:neon-flk 2.2s infinite 0.3s" opacity="0.7"/>
+          <rect x="68" y="17" width="4"   height="10" fill="#000"/>
+          <rect x="71" y="19" width="2"   height="4"  fill="#ff1a4b"/>
+          <rect x="75" y="15" width="14"  height="7"  fill="#1a0008" opacity="0.8"/>
+          <rect x="75" y="23" width="14"  height="6"  fill="#280010" opacity="0.5"/>
+          <!-- Nose sensor -->
+          <rect x="48" y="22" width="8" height="5" fill="#000" stroke="#ffaa00" stroke-width="0.5"/>
+          <rect x="50" y="23" width="4" height="3" fill="#ffaa00" opacity="0.6" style="animation:neon-flk 1.4s infinite"/>
+          <!-- Mouth grille -->
+          <rect x="8"  y="46" width="88" height="20" fill="#000" stroke="#00ffe5" stroke-width="1"/>
+          <rect x="11" y="49" width="12" height="14" fill="#00ffe5" opacity="0.6"/>
+          <rect x="25" y="49" width="12" height="14" fill="#00ffe5" opacity="0.3"/>
+          <rect x="39" y="49" width="12" height="14" fill="#00ffe5" opacity="0.75"/>
+          <rect x="53" y="49" width="12" height="14" fill="#00ffe5" opacity="0.25"/>
+          <rect x="67" y="49" width="12" height="14" fill="#00ffe5" opacity="0.55"/>
+          <rect x="81" y="49" width="12" height="14" fill="#00ffe5" opacity="0.4"/>
+          <!-- Segmentation lines -->
+          <line x1="11" y1="56" x2="93" y2="56" stroke="#000" stroke-width="1"/>
+          <!-- Antenna -->
+          <rect x="50" y="-20" width="4"   height="20" fill="#ff1a4b" opacity="0.9"/>
+          <rect x="46" y="-24" width="12"  height="4"  fill="#ff1a4b"/>
+          <rect x="48" y="-28" width="8"   height="4"  fill="#e0e8f0" style="animation:blink 0.45s step-end infinite"/>
+          <!-- Ear panels -->
+          <rect x="-16" y="14" width="16"  height="32" fill="#0a1820" stroke="#00ffe5" stroke-width="0.8"/>
+          <rect x="-14" y="18" width="6"   height="8"  fill="#00ffe5" opacity="0.5"/>
+          <rect x="-14" y="30" width="6"   height="8"  fill="#ff1a4b" opacity="0.5"/>
+          <rect x="104" y="14" width="16"  height="32" fill="#0a1820" stroke="#00ffe5" stroke-width="0.8"/>
+          <rect x="108" y="18" width="6"   height="8"  fill="#00ffe5" opacity="0.5"/>
+          <rect x="108" y="30" width="6"   height="8"  fill="#ff1a4b" opacity="0.5"/>
+        </g>
+        <!-- Side readouts -->
+        <text x="4" y="46"  font-family="monospace" font-size="6" fill="#ff1a4b" opacity="0.5">CPU</text>
+        <rect x="4" y="48"  width="24" height="3" fill="#000" stroke="#ff1a4b" stroke-width="0.5"/>
+        <rect x="5" y="49"  width="18" height="1" fill="#ff1a4b" id="cpu-bar"/>
+        <text x="4" y="62"  font-family="monospace" font-size="6" fill="#00ffe5" opacity="0.5">MEM</text>
+        <rect x="4" y="64"  width="24" height="3" fill="#000" stroke="#00ffe5" stroke-width="0.5"/>
+        <rect x="5" y="65"  width="14" height="1" fill="#00ffe5"/>
+        <text x="4" y="78"  font-family="monospace" font-size="6" fill="#39ff14" opacity="0.5">NET</text>
+        <rect x="4" y="80"  width="24" height="3" fill="#000" stroke="#39ff14" stroke-width="0.5"/>
+        <rect x="5" y="81"  width="20" height="1" fill="#39ff14"/>
+        <text x="308" y="46"  font-family="monospace" font-size="6" fill="#ff1a4b" opacity="0.5">SIG</text>
+        <rect x="308" y="48" width="24" height="3" fill="#000" stroke="#ff1a4b" stroke-width="0.5"/>
+        <rect x="309" y="49" width="20" height="1" fill="#ff1a4b"/>
+        <text x="308" y="62"  font-family="monospace" font-size="6" fill="#39ff14" opacity="0.5">PWR</text>
+        <rect x="308" y="64" width="24" height="3" fill="#000" stroke="#39ff14" stroke-width="0.5"/>
+        <rect x="309" y="65" width="13" height="1" fill="#39ff14"/>
+        <text x="308" y="78"  font-family="monospace" font-size="6" fill="#ffaa00" opacity="0.5">TEMP</text>
+        <rect x="308" y="80" width="24" height="3" fill="#000" stroke="#ffaa00" stroke-width="0.5"/>
+        <rect x="309" y="81" width="10" height="1" fill="#ffaa00"/>
+      </svg>
+    </div>
+
+    <!-- ══ S3: OBSIDIAN DRAGON ══ -->
+    <div class="scene" id="s3">
+      <svg viewBox="0 0 340 152" width="100%" height="100%" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <radialGradient id="dragonaura" cx="55%" cy="50%" r="55%">
+            <stop offset="0%" stop-color="#ff1a4b" stop-opacity="0.2"/>
+            <stop offset="50%" stop-color="#ff1a4b" stop-opacity="0.04"/>
+            <stop offset="100%" stop-color="#000" stop-opacity="0"/>
+          </radialGradient>
+          <linearGradient id="dragonscale" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#2a0810"/>
+            <stop offset="50%" stop-color="#1a0508"/>
+            <stop offset="100%" stop-color="#0d0205"/>
+          </linearGradient>
+          <linearGradient id="firegrad" x1="0%" y1="100%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#ffaa00"/>
+            <stop offset="40%" stop-color="#ff4400"/>
+            <stop offset="70%" stop-color="#ff1a4b"/>
+            <stop offset="100%" stop-color="#00ffe5" stop-opacity="0.3"/>
+          </linearGradient>
+        </defs>
+        <rect width="340" height="152" fill="#000"/>
+        <!-- Aura -->
+        <rect x="0" y="0" width="340" height="152" fill="url(#dragonaura)"/>
+        <!-- Ground mist -->
+        <rect x="0" y="130" width="340" height="22" fill="#0d0205" opacity="0.9"/>
+        <ellipse cx="180" cy="138" rx="120" ry="12" fill="#ff1a4b" opacity="0.04"/>
+        <!-- Tail -->
+        <rect x="2"  y="104" width="16" height="16" rx="2" fill="url(#dragonscale)" stroke="#ff1a4b" stroke-width="0.5" opacity="0.6"/>
+        <rect x="20" y="96"  width="18" height="18" rx="2" fill="url(#dragonscale)" stroke="#ff1a4b" stroke-width="0.5" opacity="0.7"/>
+        <rect x="40" y="86"  width="20" height="20" rx="2" fill="url(#dragonscale)" stroke="#ff1a4b" stroke-width="0.8" opacity="0.8"/>
+        <rect x="62" y="76"  width="22" height="22" rx="2" fill="url(#dragonscale)" stroke="#ff1a4b" stroke-width="0.8" opacity="0.85"/>
+        <rect x="86" y="64"  width="24" height="24" rx="2" fill="url(#dragonscale)" stroke="#ff1a4b" stroke-width="1"/>
+        <!-- Scale texture lines -->
+        <rect x="4"  y="106" width="12" height="1" fill="#ff1a4b" opacity="0.2"/>
+        <rect x="22" y="98"  width="14" height="1" fill="#ff1a4b" opacity="0.2"/>
+        <rect x="42" y="88"  width="16" height="1" fill="#ff1a4b" opacity="0.2"/>
+        <!-- Spine spikes -->
+        <polygon points="46,86 51,66 56,86" fill="#00ffe5" opacity="0.7" stroke="#00ffe5" stroke-width="0.3"/>
+        <polygon points="66,76 71,54 76,76" fill="#00ffe5" opacity="0.8" stroke="#00ffe5" stroke-width="0.3"/>
+        <polygon points="88,64 93,40 98,64" fill="#00ffe5" opacity="0.9" stroke="#00ffe5" stroke-width="0.5"/>
+        <polygon points="110,52 115,28 120,52" fill="#00ffe5" stroke="#00ffe5" stroke-width="0.5"/>
+        <!-- Body -->
+        <rect x="112" y="52" width="30" height="30" rx="2" fill="url(#dragonscale)" stroke="#ff1a4b" stroke-width="1.5"/>
+        <rect x="112" y="52" width="30" height="30" rx="2" fill="none" stroke="#00ffe5" stroke-width="0.5" opacity="0.3"/>
+        <!-- Wings - layered for depth -->
+        <polygon points="114,54 52,4  118,68"  fill="#1a0508" stroke="#ff1a4b" stroke-width="0.8" opacity="0.7"/>
+        <polygon points="114,54 70,12 116,62"  fill="#2a080e" stroke="#ff1a4b" stroke-width="0.3" opacity="0.4"/>
+        <polygon points="140,54 210,2 136,68"  fill="#1a0508" stroke="#ff1a4b" stroke-width="0.8" opacity="0.7"/>
+        <polygon points="140,54 192,10 138,62" fill="#2a080e" stroke="#ff1a4b" stroke-width="0.3" opacity="0.4"/>
+        <!-- Wing membrane veins -->
+        <line x1="115" y1="56" x2="70"  y2="18" stroke="#ff1a4b" stroke-width="0.6" opacity="0.4"/>
+        <line x1="115" y1="62" x2="78"  y2="28" stroke="#ff1a4b" stroke-width="0.4" opacity="0.3"/>
+        <line x1="115" y1="68" x2="86"  y2="36" stroke="#ff1a4b" stroke-width="0.3" opacity="0.2"/>
+        <line x1="138" y1="56" x2="182" y2="14" stroke="#ff1a4b" stroke-width="0.6" opacity="0.4"/>
+        <line x1="138" y1="62" x2="176" y2="24" stroke="#ff1a4b" stroke-width="0.4" opacity="0.3"/>
+        <line x1="138" y1="68" x2="168" y2="34" stroke="#ff1a4b" stroke-width="0.3" opacity="0.2"/>
+        <!-- Neck -->
+        <rect x="144" y="44" width="24" height="24" rx="2" fill="url(#dragonscale)" stroke="#ff1a4b" stroke-width="1.2"/>
+        <rect x="146" y="46" width="20" height="1"  fill="#ff1a4b" opacity="0.2"/>
+        <!-- HEAD -->
+        <rect x="170" y="26" width="60" height="44" rx="2" fill="url(#dragonscale)" stroke="#ff1a4b" stroke-width="2"/>
+        <rect x="172" y="28" width="56" height="40" rx="1" fill="none" stroke="#00ffe5" stroke-width="0.4" opacity="0.2"/>
+        <!-- Head scales -->
+        <rect x="172" y="28" width="56" height="4" fill="#ff1a4b" opacity="0.1"/>
+        <!-- Eye socket -->
+        <rect x="180" y="32" width="20" height="14" rx="1" fill="#000" stroke="#00ffe5" stroke-width="1.2"/>
+        <rect x="182" y="34" width="14" height="10" fill="#00ffe5" opacity="0.12"/>
+        <rect x="182" y="34" width="14" height="10" fill="#00ffe5" style="animation:neon-flk 1.6s infinite" opacity="0.5"/>
+        <rect x="185" y="36" width="6"  height="6"  fill="#000"/>
+        <rect x="186" y="37" width="2"  height="2"  fill="#fff" opacity="0.9"/>
+        <!-- Slit pupil -->
+        <rect x="187" y="36" width="2"  height="6"  fill="#ff1a4b" opacity="0.6"/>
+        <!-- Nostril -->
+        <rect x="218" y="40" width="8" height="5"  fill="#000" stroke="#ff1a4b" stroke-width="0.8"/>
+        <rect x="219" y="41" width="4" height="3"  fill="#ff1a4b" opacity="0.7" style="animation:neon-flk 0.8s infinite"/>
+        <!-- Jaw -->
+        <rect x="172" y="66" width="56" height="8"  rx="1" fill="#0d0205" stroke="#ff1a4b" stroke-width="1"/>
+        <!-- Teeth - sharp -->
+        <polygon points="175,66 178,74 181,66" fill="#d8e0e8"/>
+        <polygon points="183,66 186,73 189,66" fill="#d8e0e8"/>
+        <polygon points="191,66 194,73 197,66" fill="#d8e0e8"/>
+        <polygon points="199,66 202,72 205,66" fill="#d8e0e8"/>
+        <polygon points="207,66 210,73 213,66" fill="#d8e0e8"/>
+        <polygon points="215,66 218,72 221,66" fill="#d8e0e8"/>
+        <!-- Horns -->
+        <polygon points="172,26 158,2   180,26" fill="#1a0508" stroke="#00ffe5" stroke-width="1"/>
+        <polygon points="172,26 162,10  176,26" fill="#00ffe5" opacity="0.1"/>
+        <polygon points="196,26 188,4   206,26" fill="#1a0508" stroke="#00ffe5" stroke-width="1"/>
+        <polygon points="196,26 190,10  200,26" fill="#00ffe5" opacity="0.1"/>
+        <!-- Fire breath - volumetric blocks -->
+        <rect x="230" y="50" width="18" height="18" rx="1" fill="#ffaa00" opacity="0.95" style="animation:neon-flk 0.15s infinite"/>
+        <rect x="248" y="42" width="20" height="20" rx="1" fill="#ff6600" opacity="0.88" style="animation:neon-flk 0.2s infinite 0.04s"/>
+        <rect x="268" y="34" width="22" height="22" rx="1" fill="#ff1a4b" opacity="0.78" style="animation:neon-flk 0.18s infinite 0.08s"/>
+        <rect x="290" y="26" width="24" height="24" rx="1" fill="#cc004d" opacity="0.55" style="animation:neon-flk 0.25s infinite 0.12s"/>
+        <rect x="314" y="18" width="22" height="22" rx="1" fill="#8800aa" opacity="0.3"  style="animation:neon-flk 0.3s  infinite 0.16s"/>
+        <!-- Fire glow -->
+        <rect x="228" y="48" width="110" height="26" fill="#ff4400" opacity="0.06"/>
+        <!-- Ground line -->
+        <line x1="0" y1="140" x2="340" y2="140" stroke="#ff1a4b" stroke-width="0.5" opacity="0.3"/>
+        <line x1="0" y1="141" x2="340" y2="141" stroke="#ff1a4b" stroke-width="0.2" opacity="0.15"/>
+        <!-- Label -->
+        <text x="4" y="150" font-family="monospace" font-size="5.5" fill="#ff1a4b" opacity="0.4" letter-spacing="0.08em">CLASS::OBSIDIAN_WYRM // THREAT:OMEGA</text>
+        <!-- Corner marks -->
+        <rect x="0"   y="0"   width="6" height="1" fill="#ff1a4b" opacity="0.6"/>
+        <rect x="0"   y="0"   width="1" height="6" fill="#ff1a4b" opacity="0.6"/>
+        <rect x="334" y="0"   width="6" height="1" fill="#ff1a4b" opacity="0.6"/>
+        <rect x="339" y="0"   width="1" height="6" fill="#ff1a4b" opacity="0.6"/>
+        <rect x="0"   y="146" width="6" height="1" fill="#ff1a4b" opacity="0.4"/>
+        <rect x="334" y="146" width="6" height="1" fill="#ff1a4b" opacity="0.4"/>
+      </svg>
+    </div>
+
+  </div>
+</div>
+
+<!-- RIGHT HUD -->
+<div class="side-r">
+  <div class="hud-item">NET<strong class="r" id="net-v">94.1%</strong><div class="bar"><div class="bar-f r" id="net-b" style="width:94%"></div></div></div>
+  <div class="hud-item">CPU<strong id="cpu-v">67.3%</strong><div class="bar"><div class="bar-f" id="cpu-b" style="width:67%"></div></div></div>
+  <div class="hud-item">TEMP<strong class="r" id="tmp-v">42°C</strong></div>
+</div>
+
+<!-- LEFT HUD -->
+<div class="side-l">
+  <div class="hud-item">MODE<strong id="mode-v">RONIN</strong></div>
+  <div class="hud-item">FPS<strong class="g">60</strong></div>
+  <div class="hud-item">LINK<strong class="g">SECURE</strong></div>
+</div>
+
+<!-- BOTTOM -->
+<div class="hud-bot">
+  <div class="dots">
+    <div class="dot on" id="d0"></div>
+    <div class="dot" id="d1"></div>
+    <div class="dot" id="d2"></div>
+    <div class="dot r" id="d3"></div>
+  </div>
+  <div class="controls">
+    <button class="btn active"  onclick="go(0)">RONIN</button>
+    <button class="btn"         onclick="go(1)">NEURAL</button>
+    <button class="btn"         onclick="go(2)">GHOST</button>
+    <button class="btn r"       onclick="go(3)">WYRM</button>
+    <button class="btn r"       onclick="autoPlay()" id="abtn">▶ AUTO</button>
+  </div>
+  <div class="label-hud">// CYBER.ISLAND // TAP TO CYCLE //</div>
+</div>
+
+<script>
+(function CYBER_ISLAND() {
+  'use strict';
+
+  // ── Safe RAF wrapper: each loop is isolated, never kills siblings ──
+  function safeLoop(fn) {
+    function tick() {
+      try { fn(); } catch(e) { console.warn('[CYBER] loop err:', e.message); }
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+
+  // ── Safe element getter ──
+  function el(id) { return document.getElementById(id); }
+
+  // ── Wait for DOM ──
+  function init() {
+
+    // ── CLOCK ──
+    try {
+      const clk = () => {
+        const n = new Date();
+        const e = el('clock');
+        if (e) e.textContent = [n.getHours(), n.getMinutes(), n.getSeconds()]
+          .map(v => String(v).padStart(2, '0')).join(':');
+      };
+      clk();
+      setInterval(clk, 1000);
+    } catch(e) { console.warn('[CYBER] clock:', e.message); }
+
+    // ── RAIN CANVAS ──
+    try {
+      const rainEl = el('rain');
+      if (!rainEl) throw new Error('rain canvas missing');
+      const rx = rainEl.getContext('2d');
+
+      const resize = () => {
+        rainEl.width  = window.innerWidth;
+        rainEl.height = window.innerHeight;
+      };
+      resize();
+      window.addEventListener('resize', resize);
+
+      const drops = Array.from({ length: 120 }, () => ({
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight,
+        s: Math.random() * 4 + 2,
+        l: Math.random() * 18 + 6,
+        c: Math.random() > 0.6 ? '#00ffe5' : Math.random() > 0.5 ? '#ff1a4b' : '#ffaa00',
+        o: Math.random() * 0.35 + 0.15
+      }));
+
+      safeLoop(() => {
+        rx.clearRect(0, 0, rainEl.width, rainEl.height);
+        drops.forEach(d => {
+          rx.save();
+          rx.strokeStyle = d.c;
+          rx.lineWidth   = 0.8;
+          rx.globalAlpha = d.o;
+          rx.beginPath();
+          rx.moveTo(d.x, d.y);
+          rx.lineTo(d.x - 1, d.y + d.l);
+          rx.stroke();
+          rx.restore();
+          d.y += d.s;
+          if (d.y > rainEl.height) { d.y = -d.l; d.x = Math.random() * rainEl.width; }
+        });
+      });
+    } catch(e) { console.warn('[CYBER] rain:', e.message); }
+
+    // ── CITY CANVAS ──
+    try {
+      const cityEl = el('city');
+      if (!cityEl) throw new Error('city canvas missing');
+      const ctx = cityEl.getContext('2d');
+
+      const cityH = () => Math.floor(window.innerHeight * 0.42);
+      const resizeCity = () => {
+        cityEl.width  = window.innerWidth;
+        cityEl.height = cityH();
+      };
+      resizeCity();
+      window.addEventListener('resize', resizeCity);
+
+      // Generate buildings after canvas is sized
+      const mkBuildings = () => Array.from({ length: 30 }, () => ({
+        x:    Math.random() * window.innerWidth * 2,
+        w:    Math.floor(Math.random() * 36 + 12),
+        h:    Math.floor(Math.random() * cityEl.height * 0.8 + cityEl.height * 0.15),
+        c:    Math.random() > 0.5 ? '#00ffe5' : '#ff1a4b',
+        wins: Array.from({ length: 16 }, () => ({
+          ox: Math.floor(Math.random() * 4) * 8 + 4,
+          oy: Math.floor(Math.random() * 6) * 12 + 6,
+          on: Math.random() > 0.3
+        }))
+      }));
+
+      let buildings = mkBuildings();
+      window.addEventListener('resize', () => { buildings = mkBuildings(); });
+
+      let offset = 0;
+      safeLoop(() => {
+        const W = cityEl.width, H = cityEl.height;
+        ctx.clearRect(0, 0, W, H);
+        offset = (offset + 0.35) % W;
+
+        buildings.forEach(b => {
+          const x = ((b.x - offset % W + W * 2) % (W * 2)) - 60;
+          if (x > W + 60) return; // cull off-screen
+
+          // Building fill
+          ctx.fillStyle   = b.c;
+          ctx.globalAlpha = 0.05;
+          ctx.fillRect(x, H - b.h, b.w, b.h);
+
+          // Building outline
+          ctx.strokeStyle = b.c;
+          ctx.globalAlpha = 0.14;
+          ctx.lineWidth   = 0.6;
+          ctx.strokeRect(x, H - b.h, b.w, b.h);
+
+          // Windows
+          b.wins.forEach(w => {
+            if (!w.on) return;
+            ctx.globalAlpha = 0.3 + Math.random() * 0.3;
+            ctx.fillStyle   = b.c;
+            ctx.fillRect(x + w.ox, H - b.h + w.oy, 2, 2);
+          });
+
+          // Antenna on tall buildings
+          if (b.h > H * 0.55) {
+            ctx.globalAlpha = 0.45;
+            ctx.strokeStyle = b.c;
+            ctx.lineWidth   = 0.5;
+            ctx.beginPath();
+            ctx.moveTo(x + b.w / 2, H - b.h);
+            ctx.lineTo(x + b.w / 2, H - b.h - 10);
+            ctx.stroke();
+            ctx.fillStyle   = b.c;
+            ctx.globalAlpha = 0.85;
+            ctx.fillRect(x + b.w / 2 - 1, H - b.h - 12, 2, 2);
+          }
+        });
+
+        // Ground glow
+        ctx.globalAlpha = 0.18;
+        ctx.strokeStyle = '#00ffe5';
+        ctx.lineWidth   = 1;
+        ctx.beginPath(); ctx.moveTo(0, H - 1); ctx.lineTo(W, H - 1); ctx.stroke();
+        ctx.globalAlpha = 1;
+      });
+    } catch(e) { console.warn('[CYBER] city:', e.message); }
+
+    // ── HEX SCRAMBLE ──
+    try {
+      const HX = '0123456789ABCDEF';
+      const rh  = n => Array.from({ length: n }, () => HX[~~(Math.random() * 16)]).join('');
+      setInterval(() => {
+        ['hx1', 'hx2', 'hx3'].forEach(id => {
+          const e = el(id);
+          if (e) e.textContent = Array.from({ length: 14 }, () => rh(2)).join(' ') + '...';
+        });
+      }, 160);
+    } catch(e) { console.warn('[CYBER] hex:', e.message); }
+
+    // ── HUD FLICKER ──
+    try {
+      setInterval(() => {
+        const set = (id, val, unit) => {
+          const e = el(id); if (e) e.textContent = val.toFixed(1) + unit;
+        };
+        const setW = (id, pct) => {
+          const e = el(id); if (e) e.style.width = Math.min(100, pct) + '%';
+        };
+        const n = 88 + Math.random() * 11;
+        const c = 35 + Math.random() * 60;
+        const t = 38 + Math.random() * 18;
+        set('net-v', n, '%'); setW('net-b', n);
+        set('cpu-v', c, '%'); setW('cpu-b', c);
+        const tv = el('tmp-v'); if (tv) tv.textContent = t.toFixed(0) + '°C';
+      }, 950);
+    } catch(e) { console.warn('[CYBER] hud:', e.message); }
+
+    // ── SCENE CONTROL ──
+    try {
+      const MODES  = ['RONIN', 'NEURAL', 'GHOST', 'WYRM'];
+      const EXPAND = [null, 'ex-md', 'ex-lg', 'ex-lg'];
+      const IS_MAG = [false, false, false, true];
+      const island = el('island');
+      if (!island) throw new Error('island element missing');
+
+      let cur = 0, autoTimer = null;
+
+      function go(i, keep) {
+        if (!keep && autoTimer) {
+          clearInterval(autoTimer);
+          autoTimer = null;
+          const ab = el('abtn'); if (ab) ab.classList.remove('active');
+        }
+
+        // Toggle scenes
+        ['s0','s1','s2','s3'].forEach((id, j) => {
+          const s = el(id); if (s) s.classList.toggle('active', j === i);
+        });
+
+        // Island size
+        island.classList.remove('ex-sm', 'ex-md', 'ex-lg');
+        if (EXPAND[i]) island.classList.add(EXPAND[i]);
+
+        // Dots
+        for (let j = 0; j < 4; j++) {
+          const d = el('d' + j); if (!d) continue;
+          const on = j === i;
+          d.classList.toggle('on', on);
+          d.classList.toggle('r', on && IS_MAG[j]);
+          if (!on) {
+            d.style.background  = 'rgba(0,255,229,0.15)';
+            d.style.boxShadow   = 'none';
+          } else if (IS_MAG[j]) {
+            d.style.background  = '#ff1a4b';
+            d.style.boxShadow   = '0 0 6px #ff1a4b';
+          } else {
+            d.style.background  = '#00ffe5';
+            d.style.boxShadow   = '0 0 6px #00ffe5';
+          }
+        }
+
+        // Buttons
+        document.querySelectorAll('.btn').forEach((b, j) => {
+          if (j < 4) b.classList.toggle('active', j === i);
+        });
+
+        // Mode label
+        const mv = el('mode-v'); if (mv) mv.textContent = MODES[i];
+        cur = i;
+      }
+
+      window.autoPlay = function() {
+        const ab = el('abtn'); if (!ab) return;
+        if (autoTimer) {
+          clearInterval(autoTimer);
+          autoTimer = null;
+          ab.classList.remove('active');
+          return;
+        }
+        ab.classList.add('active');
+        go((cur + 1) % 4, true);
+        autoTimer = setInterval(() => go((cur + 1) % 4, true), 3400);
+      };
+
+      // Make go() globally accessible for inline onclick
+      window.go = go;
+
+      island.addEventListener('click', () => {
+        if (autoTimer) {
+          clearInterval(autoTimer);
+          autoTimer = null;
+          const ab = el('abtn'); if (ab) ab.classList.remove('active');
+        }
+        go((cur + 1) % 4);
+        island.style.filter = 'brightness(1.6)';
+        setTimeout(() => { island.style.filter = ''; }, 130);
+      });
+
+      island.addEventListener('touchstart', e => {
+        e.preventDefault();
+        island.dispatchEvent(new MouseEvent('click'));
+      }, { passive: false });
+
+      go(0);
+
+    } catch(e) { console.warn('[CYBER] scene ctrl:', e.message); }
+
+  } // end init()
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+})();
+</script>
+</body>
+</html>
